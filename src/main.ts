@@ -1,3 +1,4 @@
-import { FOO } from '#src/test.ts'
+import { client } from './database/client.ts'
 
-console.log('hello', { FOO })
+const todos = await client.from('todos').select('*')
+console.log({ todos: todos.data })
