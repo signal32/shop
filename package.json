@@ -1,0 +1,23 @@
+{
+    "name": "store",
+    "version": "1.0.0",
+    "description": "",
+    "license": "ISC",
+    "author": "",
+    "type": "module",
+    "main": "index.js",
+    "imports": {
+        "#src/*": "./src/*"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "eslint": "^10.0.0",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "express": "^5.2.1"
+    }
+}
