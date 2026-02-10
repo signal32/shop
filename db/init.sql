@@ -7,8 +7,8 @@ create table shop.products (
   name text not null,
   description text not null default '',
   available boolean not null default false,
-  price numeric default null
-
+  price numeric default null,
+  meta jsonb not null default '{}'::jsonb
   -- things to include here are:
   -- a list of avaliable options, their possible values, and their current value (JSONB)
   -- stripe stuff

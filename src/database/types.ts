@@ -104,6 +104,7 @@ export type Database = {
           available: boolean
           description: string
           id: string
+          meta: Json
           name: string
           price: number | null
         }
@@ -111,6 +112,7 @@ export type Database = {
           available?: boolean
           description?: string
           id?: string
+          meta?: Json
           name: string
           price?: number | null
         }
@@ -118,6 +120,7 @@ export type Database = {
           available?: boolean
           description?: string
           id?: string
+          meta?: Json
           name?: string
           price?: number | null
         }

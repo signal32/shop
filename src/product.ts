@@ -1,3 +1,47 @@
-import { type Database } from './database/types.ts'
+import type { Client } from './database/client.ts'
+import { type Database, type Json } from './database/types.ts'
 
-export type Product = Database['shop']['Tables']['products']['Row']
+export type Product = Database['shop']['Tables']['products']['Row'] & {
+    meta: ProductMeta
+}
+
+export type ProductMeta = {
+    imageUrls?: string[],
+}
+
+function isProductMeta(value: unknown): value is ProductMeta {
+    return (
+        typeof value === 'object'
+        && value !== null
+
+        && (
+            !('imageUrls' in value)
+            || (
+                Array.isArray(value.imageUrls)
+                && value.imageUrls.every(url => typeof url === 'string')
+            )
+        )
+
+        && (
+            !('headerImageUrl' in value)
+            || typeof value.headerImageUrl === 'string'
+        )
+    )
+}
+
+export function createSelect(client: Client) {
+    return client
+        .from('products')
+        .select('*')
+}
+
+export function fromSelect(rows: Awaited<ReturnType<typeof createSelect>>): Product[] {
+    if (rows.error) throw new Error(rows.error.message)
+
+    return rows.data.map(row => {
+        if (isProductMeta(row.meta)) {
+            return { ...row, meta: row.meta }
+        }
+        else throw new Error('Invalid product meta')
+    })
+}
