@@ -2,11 +2,13 @@ import type { Client } from './database/client.ts'
 import { type Database, type Json } from './database/types.ts'
 
 export type Product = Database['shop']['Tables']['products']['Row'] & {
-    meta: ProductMeta
+    meta: ProductMeta,
+    stripePriceId?: string
 }
 
 export type ProductMeta = {
     imageUrls?: string[],
+    headerImageUrl: string,
 }
 
 function isProductMeta(value: unknown): value is ProductMeta {
@@ -29,6 +31,11 @@ function isProductMeta(value: unknown): value is ProductMeta {
     )
 }
 
+//TODO
+export function isProduct(value: unknown): value is Product {
+    return true
+}
+
 export function createSelect(client: Client) {
     return client
         .from('products')
@@ -40,7 +47,7 @@ export function fromSelect(rows: Awaited<ReturnType<typeof createSelect>>): Prod
 
     return rows.data.map(row => {
         if (isProductMeta(row.meta)) {
-            return { ...row, meta: row.meta }
+            return { ...row, meta: row.meta, stripePriceId: row.stripe_price_id }
         }
         else throw new Error('Invalid product meta')
     })

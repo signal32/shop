@@ -29,16 +29,19 @@ export type Database = {
       }
       order_products: {
         Row: {
-          order_id: string | null
-          product_id: string | null
+          order_id: string
+          product_id: string
+          quantity: number
         }
         Insert: {
-          order_id?: string | null
-          product_id?: string | null
+          order_id: string
+          product_id: string
+          quantity?: number
         }
         Update: {
-          order_id?: string | null
-          product_id?: string | null
+          order_id?: string
+          product_id?: string
+          quantity?: number
         }
         Relationships: [
           {
@@ -107,6 +110,7 @@ export type Database = {
           meta: Json
           name: string
           price: number | null
+          stripe_price_id: string | null
         }
         Insert: {
           available?: boolean
@@ -115,6 +119,7 @@ export type Database = {
           meta?: Json
           name: string
           price?: number | null
+          stripe_price_id?: string | null
         }
         Update: {
           available?: boolean
@@ -123,6 +128,7 @@ export type Database = {
           meta?: Json
           name?: string
           price?: number | null
+          stripe_price_id?: string | null
         }
         Relationships: []
       }

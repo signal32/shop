@@ -8,14 +8,24 @@ create table shop.products (
   description text not null default '',
   available boolean not null default false,
   price numeric default null,
-  meta jsonb not null default '{}'::jsonb
+  meta jsonb not null default '{}'::jsonb,
   -- things to include here are:
   -- a list of avaliable options, their possible values, and their current value (JSONB)
   -- stripe stuff
+  stripe_price_id text
 );
 
-insert into shop.products (name) values
-  ('Speyside Line'), ('Train sim custom signs and stuff');
+insert into shop.products (name, price, meta) values
+  (
+    'Speyside Line',
+    12.99,
+    '{"headerImageUrl": "https://s3.finch.hamishweir.uk/shop-public/Screenshot_SB-The-Speyside-Line_57.45819-3.35020_12-00-36-1920x1080.jpg"}'
+  ),
+  (
+  'Train sim custom signs and stuff',
+  '5.99',
+  '{}'
+  );
 
 create table shop.files (
     id uuid primary key default uuid_generate_v4(),
@@ -34,7 +44,9 @@ create table shop.orders (
 
 create table shop.order_products (
     order_id uuid references shop.orders (id) on delete cascade,
-    product_id uuid references shop.products (id) on delete cascade
+    product_id uuid references shop.products (id) on delete cascade,
+    quantity int not null default 1,
+    primary key (order_id, product_id)
 );
 
 create role web_anon nologin;
