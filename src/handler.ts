@@ -25,9 +25,14 @@ export function clientForStaticPostHandler<
     body: ReqOf<H>
 ) => Promise<ResOf<H>> {
     return (body) => {
+        console.log('wow')
         return fetch(url(), {
             method: 'POST',
-            body: body.toString()
-        }) as Promise<ResOf<H>>
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then(result => result.json()) as Promise<ResOf<H>>
     }
 }
