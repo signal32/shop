@@ -2,6 +2,7 @@ import type { PostHandler } from "#src/handler.ts"
 import { isOrder, type Option, type Order } from "#src/order.ts"
 import type { Product } from "#src/product.ts"
 import { STRIPE } from "#src/stripe.ts"
+import { getProductPrice } from "./productPrice.ts"
 
 export const calculateOrder: PostHandler<
     { order: Order },
@@ -34,15 +35,4 @@ async function calculateOrderTotals(order: Order) {
     const totalPrice = linePrices.reduce((total, { linePrice }) => total + linePrice, 0)
 
     return { linePrices, totalPrice }
-}
-
-async function getProductPrice(product: Product, option: Option) {
-    let price = 0
-
-    if (product.stripe_price_id) {
-        const stripePrice = await STRIPE.prices.retrieve(product.stripe_price_id)
-        price = stripePrice.unit_amount
-    }
-
-    return price
 }
