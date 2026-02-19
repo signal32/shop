@@ -1,5 +1,5 @@
 import type { PostHandler } from "#src/handler.ts"
-import { isOrder, type Option, type Order } from "#src/order.ts"
+import { isOrder, iterOrderProducts, type Option, type Order } from "#src/order.ts"
 import type { Product } from "#src/product.ts"
 import { STRIPE } from "#src/stripe.ts"
 import { getProductPrice } from "./productPrice.ts"
@@ -17,20 +17,13 @@ export const calculateOrder: PostHandler<
 }
 
 async function calculateOrderTotals(order: Order) {
-    const linePrices = await Promise.all(
-        Object
-            .values(order.products)
-            .flatMap(({ product, options }) =>
-                Object
-                    .entries(options)
-                    .map(async ([optionId, option]) => {
-                        const quantity = option.quantity
-                        let unitPrice = await getProductPrice(product, option)
-                        const linePrice = unitPrice * quantity
+    const linePrices = await Promise.all(iterOrderProducts(order).map(async ({ product, option, optionId }) => {
+        const quantity = option.quantity
+        let unitPrice = await getProductPrice(product, option)
+        const linePrice = unitPrice * quantity
 
-                        return { product, optionId, option, quantity, unitPrice, linePrice }
-                    })
-            ))
+        return { unitPrice, linePrice, productId: product.id, optionId }
+    }))
 
     const totalPrice = linePrices.reduce((total, { linePrice }) => total + linePrice, 0)
 

@@ -65,5 +65,17 @@ export function getOrderOption(
     productId: ProductId,
     optionId: OptionId = DEFAULT_OPTION
 ) {
-    return order.products[productId].options[optionId]
+    const product = order.products[productId].product
+    if (!product) throw new Error('Product does not exist')
+    const option = order.products[productId].options[optionId]
+    if (!option) throw new Error('Option does not exist')
+    return { product, option }
+}
+
+export function* iterOrderProducts(order: Order) {
+    for (const { product, options } of Object.values(order.products)) {
+        for (const [optionId, option] of Object.entries(options)) {
+            yield { product, option, optionId }
+        }
+    }
 }

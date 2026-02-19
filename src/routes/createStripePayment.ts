@@ -1,5 +1,5 @@
 import type { PostHandler } from "#src/handler.ts";
-import type { Order } from "#src/order.ts";
+import { iterOrderProducts, type Order } from "#src/order.ts";
 import { STRIPE } from "#src/stripe.ts";
 import type { Handler } from "express"
 
@@ -12,12 +12,10 @@ export const createStripePayment: PostHandler<
     const { order } = req.body
 
     const session = await STRIPE.checkout.sessions.create({
-        line_items: Object
-            .values(order.products)
-            .map(({ product, options }) => ({
-                price: product.stripePriceId,
-                quantity: options.default.quantity,
-            })),
+        line_items: iterOrderProducts(order).map(({ product, option }) => ({
+            price: product.stripePriceId,
+            quantity: option.quantity
+        })).toArray(),
         mode: 'payment',
         success_url: `${YOUR_DOMAIN}?success=true`,
     });
