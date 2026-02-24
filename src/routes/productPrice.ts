@@ -15,7 +15,7 @@ export const productPrice: PostHandler<
         .eq('id', productId)
         .then(fromSelect)
 
-    const price = await getProductPrice(product, option.configuration)
+    const price = await getProductPrice(product, option?.configuration)
     res.status(200).json({ price })
 }
 
