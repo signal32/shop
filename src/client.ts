@@ -1,7 +1,7 @@
-import type { calculateOrder } from "./calculateOrder.ts"
+import type { calculateOrder } from "./routes/calculateOrder.ts"
 import { clientForStaticPostHandler } from "#src/handler.ts";
-import type { productPrice } from "./productPrice.ts";
-import type { createStripePayment } from "./createStripePayment.ts";
+import type { productPrice } from "./routes/productPrice.ts";
+import type { createStripePayment } from "./routes/createStripePayment.ts";
 
 export class ShopClient {
 
