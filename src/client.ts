@@ -11,7 +11,15 @@ export class ShopClient {
         this.url = url
     }
 
-    public calculateOrder = clientForStaticPostHandler<typeof calculateOrder>(() => `${this.url}/calculateOrder`)
-    public productPrice = clientForStaticPostHandler<typeof productPrice>(() => `${this.url}/productPrice`)
-    public createStripePayment = clientForStaticPostHandler<typeof createStripePayment>(() => `${this.url}/createStripePayment`)
+    public calculateOrder = clientForStaticPostHandler<typeof calculateOrder>(
+        () => `${this.url}/calculateOrder`
+    )
+
+    public productPrice = clientForStaticPostHandler<typeof productPrice>(
+        () => `${this.url}/productPrice`
+    )
+
+    public createStripePayment = clientForStaticPostHandler<typeof createStripePayment>(
+        () => `${this.url}/createStripePayment`
+    )
 }

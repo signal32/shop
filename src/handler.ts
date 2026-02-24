@@ -2,8 +2,8 @@ import type { RequestHandler } from "express"
 
 export type PostHandler<ResB, ReqB> = RequestHandler<{}, ReqB, ResB>
 
-type ReqOf<H> = H extends PostHandler<infer Req, any> ? Req : never;
-type ResOf<H> = H extends PostHandler<any, infer Res> ? Res : never;
+type ReqOf<H> = H extends PostHandler<infer Req, any> ? Req : never
+type ResOf<H> = H extends PostHandler<any, infer Res> ? Res : never
 
 export function clientForPostHandler<
     H extends PostHandler<any, any>
@@ -25,7 +25,6 @@ export function clientForStaticPostHandler<
     body: ReqOf<H>
 ) => Promise<ResOf<H>> {
     return (body) => {
-        console.log('wow')
         return fetch(url(), {
             method: 'POST',
             body: JSON.stringify(body),
