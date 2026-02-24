@@ -3,7 +3,8 @@ import { type Database, type Json } from './database/types.ts'
 
 export type Product = Database['shop']['Tables']['products']['Row'] & {
     meta: ProductMeta,
-    stripePriceId?: string
+    stripePriceId?: string,
+    configurationOptions?: ConfigurationOptions
 }
 
 export type ProductMeta = {
@@ -52,3 +53,9 @@ export function fromSelect(rows: Awaited<ReturnType<typeof createSelect>>): Prod
         else throw new Error('Invalid product meta')
     })
 }
+
+export type Configuration = Record<string, string>
+export type ConfigurationOption = {
+    values: string[],
+}
+export type ConfigurationOptions = Record<string, ConfigurationOption>

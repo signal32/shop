@@ -1,5 +1,5 @@
 import type { Client } from './database/client.ts'
-import { isProduct, type Product } from './product.ts'
+import { isProduct, type Configuration, type Product } from './product.ts'
 
 export const createSelect = (client: Client) => {
     return client
@@ -20,7 +20,7 @@ export type OptionId = typeof DEFAULT_OPTION | string
 
 export type Option = {
     quantity: number,
-    //TODO: arbitrarily variant options
+    configuration: Configuration
 }
 
 export type Options = Record<OptionId, Option>

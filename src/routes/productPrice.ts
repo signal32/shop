@@ -1,7 +1,7 @@
 import { client } from "#src/database/clientInstance.ts";
 import type { PostHandler } from "#src/handler.ts";
 import type { Option, ProductId } from "#src/order.ts";
-import { createSelect, fromSelect, type Product } from "#src/product.ts";
+import { createSelect, fromSelect, type Configuration, type Product } from "#src/product.ts";
 import { STRIPE } from "#src/stripe.ts";
 
 export const productPrice: PostHandler<
@@ -15,12 +15,11 @@ export const productPrice: PostHandler<
         .eq('id', productId)
         .then(fromSelect)
 
-    const price = await getProductPrice(product, option)
+    const price = await getProductPrice(product, option.configuration)
     res.status(200).json({ price })
-
 }
 
-export async function getProductPrice(product: Product, option?: Option) {
+export async function getProductPrice(product: Product, configuration?: Configuration) {
     let price = 0
 
     if (product.stripe_price_id) {
