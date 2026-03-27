@@ -1,12 +1,13 @@
 export { createClient } from './database/client.ts'
 export {
-    DEFAULT_OPTION,
-    getOrderOption,
-    updateOrderProductOption,
+    DEFAULT_CONFIG,
+    getOrderConfig,
+    updateOrderProductConfig,
     iterOrderProducts,
-    type Option,
-    type Options,
-    type Order
+    type Config,
+    type Configs,
+    type Order,
 } from './order.ts'
-export { type Product } from './product.ts'
+export { type Product, type Options } from './product.ts'
 export { ShopClient } from './client.ts'
+export const boo = 'test'

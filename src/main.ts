@@ -4,7 +4,6 @@ import { default as express } from 'express'
 import routes from './routes/index.ts'
 
 // const todos = await createSelect(client).eq('name', 'Speyside Line').then(fromSelect)
-// console.log({ todos: todos[0].meta })
 const app = express()
 
 app.use(bodyParser.json())

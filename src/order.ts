@@ -1,5 +1,5 @@
 import type { Client } from './database/client.ts'
-import { isProduct, type Configuration, type Product } from './product.ts'
+import { isProduct, type Options, type Product } from './product.ts'
 
 export const createSelect = (client: Client) => {
     return client
@@ -15,21 +15,21 @@ export const createSelect = (client: Client) => {
 
 export type ProductId = Product['id']
 
-export const DEFAULT_OPTION = 'default' as const
-export type OptionId = typeof DEFAULT_OPTION | string
+export const DEFAULT_CONFIG = 'default' as const
+export type ConfigId = typeof DEFAULT_CONFIG | string
 
-export type Option = {
+export type Config = {
     quantity: number,
-    configuration: Configuration
+    options: Options
 }
 
-export type Options = Record<OptionId, Option>
+export type Configs = Record<ConfigId, Config>
 
 export type Order = {
     id: string;
     products: Record<ProductId, {
         product: Product,
-        options: Options,
+        configs: Configs,
     }>;
 }
 
@@ -49,33 +49,33 @@ export function isOrder(value: unknown): value is Order {
     )
 }
 
-export function updateOrderProductOption(
-    option: Option | ((current: Option) => Option),
+export function updateOrderProductConfig(
+    config: Config | ((current: Config) => Config),
     order: Order,
     productId: ProductId,
-    optionId: OptionId = DEFAULT_OPTION
+    configId: ConfigId = DEFAULT_CONFIG
 ) {
     const orderProduct = order.products[productId]
     if (!orderProduct) throw new Error('Product not in order')
-    orderProduct.options[optionId] = typeof option === 'function' ? option(orderProduct.options[optionId]) : option
+    orderProduct.configs[configId] = typeof config === 'function' ? config(orderProduct.configs[configId]) : config
 }
 
-export function getOrderOption(
+export function getOrderConfig(
     order: Order,
     productId: ProductId,
-    optionId: OptionId = DEFAULT_OPTION
+    configId: ConfigId = DEFAULT_CONFIG
 ) {
     const product = order.products[productId].product
     if (!product) throw new Error('Product does not exist')
-    const option = order.products[productId].options[optionId]
-    if (!option) throw new Error('Option does not exist')
-    return { product, option }
+    const config = order.products[productId].configs[configId]
+    if (!config) throw new Error('Config does not exist')
+    return { product, config }
 }
 
 export function* iterOrderProducts(order: Order) {
-    for (const { product, options } of Object.values(order.products)) {
-        for (const [optionId, option] of Object.entries(options)) {
-            yield { product, option, optionId }
+    for (const { product, configs } of Object.values(order.products)) {
+        for (const [optionId, config] of Object.entries(configs)) {
+            yield { product, config, optionId }
         }
     }
 }

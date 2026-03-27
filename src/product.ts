@@ -54,8 +54,22 @@ export function fromSelect(rows: Awaited<ReturnType<typeof createSelect>>): Prod
     })
 }
 
-export type Configuration = Record<string, string>
-export type ConfigurationOption = {
-    values: string[],
+export type Options = Record<string, Option>
+
+export type Option = {
+    value: string,
+    hidden?: boolean,
 }
+
+export type ConfigurationOption = {
+    type: 'select'
+    values: string[]
+} | {
+    type: 'input'
+    value: string
+} | {
+    type: 'number'
+    value: number
+}
+
 export type ConfigurationOptions = Record<string, ConfigurationOption>

@@ -2,6 +2,7 @@ import type { calculateOrder } from "./routes/calculateOrder.ts"
 import { clientForStaticPostHandler } from "#src/handler.ts";
 import type { productPrice } from "./routes/productPrice.ts";
 import type { createStripePayment } from "./routes/createStripePayment.ts";
+import type { generatePreSignedUploadUrl } from "./routes/generatePreSignedUploadUrl.ts";
 
 export class ShopClient {
 
@@ -21,5 +22,9 @@ export class ShopClient {
 
     public createStripePayment = clientForStaticPostHandler<typeof createStripePayment>(
         () => `${this.url}/createStripePayment`
+    )
+
+    public generatePreSignedUploadUrl = clientForStaticPostHandler<typeof generatePreSignedUploadUrl>(
+        () => `${this.url}/generatePreSignedUploadUrl`
     )
 }
