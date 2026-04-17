@@ -29,16 +29,25 @@ export type Database = {
       }
       order_products: {
         Row: {
+          config_id: string
+          meta: Json
+          options: Json
           order_id: string
           product_id: string
           quantity: number
         }
         Insert: {
+          config_id: string
+          meta?: Json
+          options?: Json
           order_id: string
           product_id: string
           quantity?: number
         }
         Update: {
+          config_id?: string
+          meta?: Json
+          options?: Json
           order_id?: string
           product_id?: string
           quantity?: number
@@ -62,13 +71,19 @@ export type Database = {
       }
       orders: {
         Row: {
+          fulfilled: boolean
           id: string
+          paid: boolean
         }
         Insert: {
+          fulfilled?: boolean
           id?: string
+          paid?: boolean
         }
         Update: {
+          fulfilled?: boolean
           id?: string
+          paid?: boolean
         }
         Relationships: []
       }

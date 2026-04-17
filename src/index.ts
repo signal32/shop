@@ -1,6 +1,6 @@
 export { createClient } from './database/client.ts'
 export {
-    DEFAULT_CONFIG,
+    configId,
     getOrderConfig,
     updateOrderProductConfig,
     iterOrderProducts,

@@ -2,9 +2,13 @@ import bodyParser from 'body-parser'
 import cors from 'cors'
 import { default as express } from 'express'
 import routes from './routes/index.ts'
+import { webhook } from './stripe.ts'
 
 // const todos = await createSelect(client).eq('name', 'Speyside Line').then(fromSelect)
 const app = express()
+
+app.post('/stripe/webhook', express.raw({ type: 'application/json' }), webhook)
+
 
 app.use(bodyParser.json())
 app.use(cors())

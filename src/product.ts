@@ -1,9 +1,9 @@
 import type { Client } from './database/client.ts'
 import { type Database, type Json } from './database/types.ts'
+import type { IFindProductByIdResult } from './queries/queries.queries.ts'
 
-export type Product = Database['shop']['Tables']['products']['Row'] & {
+export type Product = IFindProductByIdResult & {
     meta: ProductMeta,
-    stripePriceId?: string,
     configurationOptions?: ConfigurationOptions
 }
 
