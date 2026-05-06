@@ -12,7 +12,6 @@ export function clientForPostHandler<
     body: ReqOf<H>
 ) => Promise<ResOf<H>> {
     return (url, body) => {
-        console.log('lets fetch', JSON.stringify(body))
         return fetch(url, {
             method: 'POST',
             body: JSON.stringify(body),

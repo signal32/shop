@@ -23,7 +23,7 @@ export const listSignsPostHandler: PostHandler<{}, {
         const id = entry.name
         signs.push({
             id,
-            name: `Sign: ${id}`,
+            name: `${id}`,
             previewModelUrl: `/previewModel/${id}`
         })
     }

@@ -16,6 +16,7 @@ import util from 'node:util';
 import sanitize from "sanitize-filename";
 import sharp from "sharp";
 import type { FulfillmentHandler } from "../routes/fulfillOrder.ts";
+import { config } from "./config.ts";
 
 const execAsync = util.promisify(exec)
 
@@ -34,13 +35,13 @@ export const signOrderFulfillmentHandler: FulfillmentHandler = async (req, res, 
     if (typeof name !== 'string') throw new Error('Expected name')
 
     //TODO: sanitize these and generally make this sane.
-    const railworksDir = process.env['SHOP_RAILWORKS_DIR']
-    const templateDir = path.join(railworksDir, 'sign_templates', parsedSignConfig.signId) //TODO: validate signid to avoid injection!
+    const { railworksDir, signTemplateDir } = config
+    const currentSignTemplateDir = path.join(signTemplateDir, parsedSignConfig.signId) //TODO: validate signid to avoid injection!
     const workDir = path.join(railworksDir, `work/${provider}-${product}-${name}`)
     const buildDir = path.join(railworksDir, `builds/${provider}-${product}-${name}`)
     const buildArchivePath = path.join(railworksDir, `builds/${provider}-${product}-${name}.zip`)
 
-    await cp(templateDir, workDir, { recursive: true })
+    await cp(currentSignTemplateDir, workDir, { recursive: true })
 
     // Fetch user texture
     const bucket = 'shop-user-uploads'
@@ -73,8 +74,8 @@ export const signOrderFulfillmentHandler: FulfillmentHandler = async (req, res, 
         .toFile(combinedImagePath)
 
     // Convert it into a dds
-    // Requires ImageMagick
-    await execAsync(`convert "${combinedImagePath}" DDS:"${ddsImagePath}"`)
+    // Requires ImageMagick. TS has to do its own compression.
+    await execAsync(`convert "${combinedImagePath}" -depth 8 -define dds:compression=none -define dds:format=rgba "${ddsImagePath}"`)
 
     // Build and archive TS asset
     const { stdout, stderr } = await execAsync([
