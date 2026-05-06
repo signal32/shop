@@ -1,7 +1,8 @@
 import type { PostHandler } from "#src/handler.ts";
-import { readdir } from "fs/promises";
-import path from "path";
+import { readdir, readFile } from "fs/promises";
+import path, { join } from "path";
 import { config } from "./config.ts";
+import { existsSync } from "fs";
 
 type SignOption = {
     id: string,
@@ -18,12 +19,14 @@ export const listSignsPostHandler: PostHandler<{}, {
     const entries = await readdir(signTemplateDir, { withFileTypes: true })
 
     for (const entry of entries) {
-        if (!entry.isDirectory()) continue
+        const metaPath = join(entry.parentPath, entry.name, 'meta.json')
+        if (!entry.isDirectory() || !existsSync(metaPath)) continue
 
+        const meta = JSON.parse((await readFile(metaPath)).toString())
         const id = entry.name
         signs.push({
             id,
-            name: `${id}`,
+            name: meta.name,
             previewModelUrl: `/previewModel/${id}`
         })
     }
