@@ -1,17 +1,4 @@
-import type { Client } from './database/client.ts'
 import { isProduct, type Options, type Product } from './product.ts'
-
-export const createSelect = (client: Client) => {
-    return client
-        .from('orders')
-        .select(`
-            id,
-            products:order_products (
-                product:products ( * ),
-                quantity
-            )
-        `)
-}
 
 export type ProductId = Product['id']
 

@@ -1,4 +1,3 @@
-export { createClient } from './database/client.ts'
 export {
     configId,
     getOrderConfig,

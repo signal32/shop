@@ -1,4 +1,4 @@
-import { pool } from "#src/database/clientInstance.ts";
+import { pool } from "#src/database/client.ts";
 import type { PostHandler } from "#src/handler.ts";
 import type { Order } from "#src/order.ts";
 import type { Options, Product } from "#src/product.ts";

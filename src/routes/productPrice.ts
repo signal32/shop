@@ -1,25 +1,23 @@
-import { client } from "#src/database/clientInstance.ts";
+import { pool } from "#src/database/client.ts";
 import type { PostHandler } from "#src/handler.ts";
 import type { Config, ProductId } from "#src/order.ts";
-import { createSelect, fromSelect, type Options, type Product } from "#src/product.ts";
+import { fromSelect, type Options, type Product } from "#src/product.ts";
+import { findProductById } from "#src/queries/queries.queries.ts";
 import { STRIPE } from "#src/stripe.ts";
 
 export const productPrice: PostHandler<
-    { productId: ProductId, option?: Config },
+    { productId: ProductId, config?: Config },
     { price: number }
 > = async (req, res, next) => {
-    const { productId, option } = req.body
+    const { productId, config } = req.body
     if (productId === undefined) throw new Error('Product ID required')
 
-    const [product] = await createSelect(client)
-        .eq('id', productId)
-        .then(fromSelect)
-
-    const price = await getProductPrice(product, option?.configuration)
+    const [product] = await findProductById.run({ productId }, pool).then(fromSelect)
+    const price = await getProductPrice(product, config?.options)
     res.status(200).json({ price })
 }
 
-export async function getProductPrice(product: Product, configuration?: Options) {
+export async function getProductPrice(product: Product, options?: Options) {
     let price = 0
 
     if (product.stripe_price_id) {

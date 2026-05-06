@@ -1,7 +1,7 @@
-import { pool } from '#src/database/clientInstance.ts';
+import { pool } from '#src/database/client.ts';
 import { clientForPostHandler, type PostHandler } from '#src/handler.ts';
 import { findOrderById, findProductById, findProductsInOrder, upsertOrderProduct } from '#src/queries/queries.queries.ts';
-import type { Product } from '#src/product.ts';
+import { fromSelect, type Product } from '#src/product.ts';
 import type { Config } from '#src/order.ts';
 
 export type FulfillmentHandlerReqBody = {
@@ -40,7 +40,7 @@ export async function fulfillOrder(orderId: string) {
 
     const orderProducts = await findProductsInOrder.run({ orderId }, pool)
     for (const orderProduct of orderProducts) {
-        const [product] = await findProductById.run({ productId: orderProduct.product_id }, pool)
+        const [product] = await findProductById.run({ productId: orderProduct.product_id }, pool).then(fromSelect)
 
         if (product.fulfillment_webhook) {
             const result = await fulfillmentHandlerClient(product.fulfillment_webhook, {

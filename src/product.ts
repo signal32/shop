@@ -1,6 +1,4 @@
-import type { Client } from './database/client.ts'
-import { type Database, type Json } from './database/types.ts'
-import type { IFindProductByIdResult } from './queries/queries.queries.ts'
+import type { findProductById, IFindProductByIdResult } from './queries/queries.queries.ts'
 
 export type Product = IFindProductByIdResult & {
     meta: ProductMeta,
@@ -37,16 +35,8 @@ export function isProduct(value: unknown): value is Product {
     return true
 }
 
-export function createSelect(client: Client) {
-    return client
-        .from('products')
-        .select('*')
-}
-
-export function fromSelect(rows: Awaited<ReturnType<typeof createSelect>>): Product[] {
-    if (rows.error) throw new Error(rows.error.message)
-
-    return rows.data.map(row => {
+export function fromSelect(rows: Awaited<ReturnType<typeof findProductById.run>>): Product[] {
+    return rows.map(row => {
         if (isProductMeta(row.meta)) {
             return { ...row, meta: row.meta, stripePriceId: row.stripe_price_id }
         }

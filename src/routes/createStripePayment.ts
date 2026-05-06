@@ -1,7 +1,7 @@
 import type { PostHandler } from "#src/handler.ts";
 import { iterOrderProducts, type Order } from "#src/order.ts";
 import { STRIPE } from "#src/stripe.ts";
-import { client, pgClient, pool } from "#src/database/clientInstance.ts";
+import { pool } from "#src/database/client.ts";
 import { upsertOrder, upsertOrderProduct } from "#src/queries/queries.queries.ts";
 
 export const createStripePayment: PostHandler<

@@ -8,10 +8,12 @@ import { signOrderFulfillmentHandler } from "#src/customSigns/fulfillSignOrder.t
 import { postFulfillOrder } from "./fulfillOrder.ts";
 import { listSignsPostHandler } from "#src/customSigns/listSigns.ts";
 import { previewModelHandler } from "#src/customSigns/previewModel.ts";
+import { findProducts } from "./findProducts.ts";
 
 export default Router()
     .post('/calculateOrder', calculateOrder)
     .post('/productPrice', productPrice)
+    .post('/findProducts', findProducts)
     .post('/createStripePayment', createStripePayment)
     .post('/generatePreSignedUploadUrl', generatePreSignedUploadUrl)
     .post('/fulfillOrder', postFulfillOrder)

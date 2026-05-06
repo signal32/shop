@@ -1,7 +1,6 @@
 /* @name FindOrderById */
 SELECT * FROM shop.orders WHERE id = :orderId;
 
-
 /* @name SetOrderPaid */
 UPDATE shop.orders
 SET paid = :paid!
@@ -51,3 +50,9 @@ RETURNING *;
 
 /* @name FindProductById */
 select * from shop.products where id = :productId;
+
+
+/* @name FindProducts */
+select *
+from shop.products
+where (:productIds::uuid[] is null or id = any(:productIds));

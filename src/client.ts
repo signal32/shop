@@ -5,6 +5,7 @@ import type { createStripePayment } from "./routes/createStripePayment.ts";
 import type { generatePreSignedUploadUrl } from "./routes/generatePreSignedUploadUrl.ts";
 import type { getOrder } from "./routes/getOrder.ts";
 import type { listSignsPostHandler } from "./customSigns/listSigns.ts";
+import type { findProducts } from "./routes/findProducts.ts";
 
 export class ShopClient {
 
@@ -36,5 +37,9 @@ export class ShopClient {
 
     public listSigns = clientForStaticPostHandler<typeof listSignsPostHandler>(
         () => `${this.url}/listSigns`
+    )
+
+    public findProducts = clientForStaticPostHandler<typeof findProducts>(
+        () => `${this.url}/findProducts`
     )
 }

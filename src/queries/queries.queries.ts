@@ -3,6 +3,8 @@ import { PreparedQuery } from '@pgtyped/runtime';
 
 export type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 
+export type stringArray = (string)[];
+
 /** 'FindOrderById' parameters type */
 export interface IFindOrderByIdParams {
   orderId?: string | null | void;
@@ -231,5 +233,41 @@ const findProductByIdIR: any = {"usedParamSet":{"productId":true},"params":[{"na
  * ```
  */
 export const findProductById = new PreparedQuery<IFindProductByIdParams,IFindProductByIdResult>(findProductByIdIR);
+
+
+/** 'FindProducts' parameters type */
+export interface IFindProductsParams {
+  productIds?: stringArray | null | void;
+}
+
+/** 'FindProducts' return type */
+export interface IFindProductsResult {
+  available: boolean;
+  description: string;
+  fulfillment_webhook: string | null;
+  id: string;
+  meta: Json;
+  name: string;
+  price: string | null;
+  stripe_price_id: string | null;
+}
+
+/** 'FindProducts' query type */
+export interface IFindProductsQuery {
+  params: IFindProductsParams;
+  result: IFindProductsResult;
+}
+
+const findProductsIR: any = {"usedParamSet":{"productIds":true},"params":[{"name":"productIds","required":false,"transform":{"type":"scalar"},"locs":[{"a":35,"b":45},{"a":75,"b":85}]}],"statement":"select *\nfrom shop.products\nwhere (:productIds::uuid[] is null or id = any(:productIds))"};
+
+/**
+ * Query generated from SQL:
+ * ```
+ * select *
+ * from shop.products
+ * where (:productIds::uuid[] is null or id = any(:productIds))
+ * ```
+ */
+export const findProducts = new PreparedQuery<IFindProductsParams,IFindProductsResult>(findProductsIR);
 
 

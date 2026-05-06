@@ -1,6 +1,6 @@
 import type { Handler } from 'express';
 import { Stripe } from 'stripe';
-import { pool } from './database/clientInstance.ts';
+import { pool } from './database/client.ts';
 import { setOrderPaid } from './queries/queries.queries.ts';
 import { fulfillOrder } from './routes/fulfillOrder.ts';
 
