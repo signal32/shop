@@ -8,7 +8,7 @@ import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { createReadStream } from "fs";
 import { exec } from "node:child_process";
 import { createWriteStream } from "node:fs";
-import { cp, rm } from "node:fs/promises";
+import { access, cp, readdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
@@ -16,6 +16,7 @@ import util from 'node:util';
 import sanitize from "sanitize-filename";
 import sharp from "sharp";
 import type { FulfillmentHandler } from "../routes/fulfillOrder.ts";
+import { constants } from "fs";
 import { config } from "./config.ts";
 
 const execAsync = util.promisify(exec)
@@ -59,7 +60,10 @@ export const signOrderFulfillmentHandler: FulfillmentHandler = async (req, res, 
     await pipeline(response.Body, writeStream)
 
     // Insert user texture into maintex
-    const baseImage = sharp(path.join(workDir, 'maintex_template.png'))
+
+    const templatePath = path.join(workDir, 'maintex_template.png')
+    const texturePath = path.join(workDir, 'textures', 'maintex.png')
+    const baseImage = sharp(await exists(texturePath) ? texturePath : templatePath)
     const combinedImagePath = path.join(workDir, 'maintex_combined.png')
     const ddsImagePath = path.join(workDir, 'textures', 'maintex.dds')
 
@@ -75,7 +79,17 @@ export const signOrderFulfillmentHandler: FulfillmentHandler = async (req, res, 
 
     // Convert it into a dds
     // Requires ImageMagick. TS has to do its own compression.
-    await execAsync(`convert "${combinedImagePath}" -depth 8 -define dds:compression=none -define dds:format=rgba "${ddsImagePath}"`)
+    const ddsArgs = "-depth 8 -define dds:compression=none -define dds:format=rgba"
+    await execAsync(`convert "${combinedImagePath}" ${ddsArgs} "${ddsImagePath}"`)
+
+    // convert png images to dds
+    for (const file of await (readdir(path.join(workDir, 'textures'), { withFileTypes: true }))) {
+        if (file.name.toLowerCase().endsWith('.dds')) continue
+        const inputPath = path.join(file.parentPath, file.name)
+        const outputPath = path.join(file.parentPath, path.parse(file.name).name) + ".dds"
+        if (await exists(outputPath)) continue
+        await execAsync(`convert "${inputPath}" ${ddsArgs} "${outputPath}"`)
+    }
 
     // Build and archive TS asset
     const { stdout, stderr } = await execAsync([
@@ -127,4 +141,13 @@ export const signOrderFulfillmentHandler: FulfillmentHandler = async (req, res, 
             name: 'Asset files'
         }]
     })
+}
+
+async function exists(path: string) {
+    try {
+        await access(path, constants.F_OK);
+        return true;
+    } catch {
+        return false;
+    }
 }
