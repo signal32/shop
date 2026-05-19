@@ -78,9 +78,10 @@ export const signOrderFulfillmentHandler: FulfillmentHandler = async (req, res, 
         .toFile(combinedImagePath)
 
     // Convert it into a dds
-    // Requires ImageMagick. TS has to do its own compression.
-    const ddsArgs = "-depth 8 -define dds:compression=none -define dds:format=rgba"
-    await execAsync(`convert "${combinedImagePath}" ${ddsArgs} "${ddsImagePath}"`)
+    // Requires compressonator: https://github.com/GPUOpen-Tools/compressonator
+    const ddsArgs = "-format dds -depth 32 -define dds:compression=none"
+    // await execAsync(`convert "${combinedImagePath}" ${ddsArgs} "${ddsImagePath}"`)
+    await execAsync(`/usr/compressonatorcli "${combinedImagePath}" "${ddsImagePath}" -fd ARGB_8888 -miplevels 4`)
 
     // convert png images to dds
     for (const file of await (readdir(path.join(workDir, 'textures'), { withFileTypes: true }))) {
@@ -88,7 +89,7 @@ export const signOrderFulfillmentHandler: FulfillmentHandler = async (req, res, 
         const inputPath = path.join(file.parentPath, file.name)
         const outputPath = path.join(file.parentPath, path.parse(file.name).name) + ".dds"
         if (await exists(outputPath)) continue
-        await execAsync(`convert "${inputPath}" ${ddsArgs} "${outputPath}"`)
+        await execAsync(`/usr/compressonatorcli "${inputPath}" "${outputPath}" -fd ARGB_8888 -miplevels 4`)
     }
 
     // Build and archive TS asset
@@ -108,7 +109,7 @@ export const signOrderFulfillmentHandler: FulfillmentHandler = async (req, res, 
             `"${workDir}"`,
             `&&`
         ].join(' '),
-        `zip -r "${buildArchivePath}" "${buildDir}"`
+        `(cd "${buildDir}" && zip -r "${buildArchivePath}" .)`
     ].join(' '))
     console.log(stdout, stderr)
 
