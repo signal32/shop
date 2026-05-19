@@ -7,7 +7,8 @@ import { existsSync } from "fs";
 type SignOption = {
     id: string,
     name: string,
-    previewModelUrl: string
+    previewModelUrl: string,
+    defaultConfig?: Object // TODO use SignConfig type
 }
 
 export const listSignsPostHandler: PostHandler<{}, {
@@ -27,7 +28,8 @@ export const listSignsPostHandler: PostHandler<{}, {
         signs.push({
             id,
             name: meta.name,
-            previewModelUrl: `/previewModel/${id}`
+            previewModelUrl: `/previewModel/${id}`,
+            defaultConfig: meta.defaultConfig,
         })
     }
 
