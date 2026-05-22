@@ -4,20 +4,22 @@ import { default as express } from 'express'
 import routes from './routes/index.ts'
 import { webhook } from './stripe.ts'
 
-// const todos = await createSelect(client).eq('name', 'Speyside Line').then(fromSelect)
+process.loadEnvFile()
+const port = process.env['SHOP_PORT']
+
 const app = express()
 
+// Stripe webhook must be registered before middleware
 app.post('/stripe/webhook', express.raw({ type: 'application/json' }), webhook)
-
 
 app.use(bodyParser.json())
 app.use(cors())
 app.use(routes)
 
-app.get('/', (req, res) => {
-    res.send('Hello World!')
+app.get('/', (_req, res) => {
+    res.send('Shop API')
 })
 
-app.listen(3004, () => {
-    console.log(`App listening on port ${3004}`)
+app.listen(port, () => {
+    console.log(`App listening on port ${port}`)
 })
