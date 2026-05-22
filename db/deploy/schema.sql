@@ -1,3 +1,7 @@
+-- Deploy signal32/shop:schema to pg
+
+BEGIN;
+
 create extension if not exists "uuid-ossp";
 
 create schema shop;
@@ -48,6 +52,12 @@ create table shop.orders (
     paid boolean not null default false
 );
 
+create type fulfillment_status as enum (
+    'pending',
+    'fulfilled',
+    'failed'
+);
+
 create table shop.order_products (
     order_id uuid references shop.orders (id) on delete cascade,
     product_id uuid references shop.products (id) on delete cascade,
@@ -56,22 +66,8 @@ create table shop.order_products (
     meta jsonb not null default '{}'::jsonb,
     quantity int not null default 1,
     files jsonb not null default '{}'::jsonb,
-    fulfilled boolean not null default false,
+    fulfillment_status fulfillment_status,
     primary key (order_id, product_id, config_id)
 );
 
-create role web_anon nologin;
-
-grant usage on schema shop to web_anon;
-grant select on shop.products to web_anon;
-grant select on shop.files to web_anon;
-grant select on shop.product_files to web_anon;
-grant select on shop.orders to web_anon;
-grant insert on shop.orders to web_anon;
-grant update on shop.orders to web_anon;
-grant select on shop.order_products to web_anon;
-grant insert on shop.order_products to web_anon;
-grant update on shop.order_products to web_anon;
-
-create role authenticator noinherit login password 'mysecretpassword';
-grant web_anon to authenticator;
+COMMIT;

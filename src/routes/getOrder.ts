@@ -2,7 +2,7 @@ import { pool } from "#src/database/client.ts";
 import type { PostHandler } from "#src/handler.ts";
 import type { Order } from "#src/order.ts";
 import type { Options, Product } from "#src/product.ts";
-import { findOrderById, findProductsInOrder } from "#src/queries/queries.queries.ts";
+import { findOrderById, findProductsInOrder, type IFindProductsInOrderResult } from "#src/queries/queries.queries.ts";
 import { s3Client } from "#src/s3.ts";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -11,7 +11,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 type OrderProductInfo = {
     productId: string,
     coinfigId: string,
-    fulfilled: boolean,
+    fulfillmentStatus: IFindProductsInOrderResult['fulfillment_status'],
     options: Options,
     files: {
         name: string,
@@ -38,7 +38,7 @@ export const getOrder: PostHandler<
             configId: orderProduct.config_id,
             quantity: orderProduct.quantity,
             options: orderProduct.options,
-            fulfilled: orderProduct.fulfilled,
+            fulfillmentStatus: orderProduct.fulfillment_status,
             files: [{ productId: '', name: 'test file', url: 'http://test' }],
         }
 

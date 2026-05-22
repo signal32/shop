@@ -27,7 +27,7 @@ INSERT INTO shop.order_products (
   meta,
   quantity,
   files,
-  fulfilled
+  fulfillment_status
 )
 VALUES (
   :order_id!,
@@ -37,7 +37,7 @@ VALUES (
   COALESCE(:meta, '{}'::jsonb),
   COALESCE(:quantity, 1),
   COALESCE(:files, '{}'::jsonb),
-  COALESCE(:fulfilled, false)
+  COALESCE(:fulfillment_status::fulfillment_status, null)
 )
 ON CONFLICT (order_id, product_id, config_id)
 DO UPDATE SET
@@ -45,7 +45,7 @@ DO UPDATE SET
   meta = COALESCE(:meta, shop.order_products.meta),
   quantity = COALESCE(:quantity, shop.order_products.quantity),
   files = COALESCE(:files, shop.order_products.files),
-  fulfilled = COALESCE(:fulfilled, shop.order_products.fulfilled)
+  fulfillment_status = COALESCE(:fulfillment_status::fulfillment_status, shop.order_products.fulfillment_status)
 RETURNING *;
 
 /* @name FindProductById */

@@ -1,6 +1,8 @@
 /** Types generated for queries found in "src/queries/queries.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
+export type fulfillment_status = 'failed' | 'fulfilled' | 'pending';
+
 export type Json = null | boolean | number | string | Json[] | { [key: string]: Json };
 
 export type stringArray = (string)[];
@@ -108,7 +110,7 @@ export interface IFindProductsInOrderParams {
 export interface IFindProductsInOrderResult {
   config_id: string;
   files: Json;
-  fulfilled: boolean;
+  fulfillment_status: fulfillment_status | null;
   meta: Json;
   options: Json;
   order_id: string;
@@ -137,7 +139,7 @@ export const findProductsInOrder = new PreparedQuery<IFindProductsInOrderParams,
 export interface IUpsertOrderProductParams {
   config_id: string;
   files?: Json | null | void;
-  fulfilled?: boolean | null | void;
+  fulfillment_status?: fulfillment_status | null | void;
   meta?: Json | null | void;
   options?: Json | null | void;
   order_id: string;
@@ -149,7 +151,7 @@ export interface IUpsertOrderProductParams {
 export interface IUpsertOrderProductResult {
   config_id: string;
   files: Json;
-  fulfilled: boolean;
+  fulfillment_status: fulfillment_status | null;
   meta: Json;
   options: Json;
   order_id: string;
@@ -163,7 +165,7 @@ export interface IUpsertOrderProductQuery {
   result: IUpsertOrderProductResult;
 }
 
-const upsertOrderProductIR: any = {"usedParamSet":{"order_id":true,"product_id":true,"config_id":true,"options":true,"meta":true,"quantity":true,"files":true,"fulfilled":true},"params":[{"name":"order_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":138,"b":147}]},{"name":"product_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":152,"b":163}]},{"name":"config_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":168,"b":178}]},{"name":"options","required":false,"transform":{"type":"scalar"},"locs":[{"a":192,"b":199},{"a":420,"b":427}]},{"name":"meta","required":false,"transform":{"type":"scalar"},"locs":[{"a":227,"b":231},{"a":478,"b":482}]},{"name":"quantity","required":false,"transform":{"type":"scalar"},"locs":[{"a":259,"b":267},{"a":534,"b":542}]},{"name":"files","required":false,"transform":{"type":"scalar"},"locs":[{"a":285,"b":290},{"a":595,"b":600}]},{"name":"fulfilled","required":false,"transform":{"type":"scalar"},"locs":[{"a":318,"b":327},{"a":654,"b":663}]}],"statement":"INSERT INTO shop.order_products (\n  order_id,\n  product_id,\n  config_id,\n  options,\n  meta,\n  quantity,\n  files,\n  fulfilled\n)\nVALUES (\n  :order_id!,\n  :product_id!,\n  :config_id!,\n  COALESCE(:options, '{}'::jsonb),\n  COALESCE(:meta, '{}'::jsonb),\n  COALESCE(:quantity, 1),\n  COALESCE(:files, '{}'::jsonb),\n  COALESCE(:fulfilled, false)\n)\nON CONFLICT (order_id, product_id, config_id)\nDO UPDATE SET\n  options = COALESCE(:options, shop.order_products.options),\n  meta = COALESCE(:meta, shop.order_products.meta),\n  quantity = COALESCE(:quantity, shop.order_products.quantity),\n  files = COALESCE(:files, shop.order_products.files),\n  fulfilled = COALESCE(:fulfilled, shop.order_products.fulfilled)\nRETURNING *"};
+const upsertOrderProductIR: any = {"usedParamSet":{"order_id":true,"product_id":true,"config_id":true,"options":true,"meta":true,"quantity":true,"files":true,"fulfillment_status":true},"params":[{"name":"order_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":147,"b":156}]},{"name":"product_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":161,"b":172}]},{"name":"config_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":177,"b":187}]},{"name":"options","required":false,"transform":{"type":"scalar"},"locs":[{"a":201,"b":208},{"a":457,"b":464}]},{"name":"meta","required":false,"transform":{"type":"scalar"},"locs":[{"a":236,"b":240},{"a":515,"b":519}]},{"name":"quantity","required":false,"transform":{"type":"scalar"},"locs":[{"a":268,"b":276},{"a":571,"b":579}]},{"name":"files","required":false,"transform":{"type":"scalar"},"locs":[{"a":294,"b":299},{"a":632,"b":637}]},{"name":"fulfillment_status","required":false,"transform":{"type":"scalar"},"locs":[{"a":327,"b":345},{"a":700,"b":718}]}],"statement":"INSERT INTO shop.order_products (\n  order_id,\n  product_id,\n  config_id,\n  options,\n  meta,\n  quantity,\n  files,\n  fulfillment_status\n)\nVALUES (\n  :order_id!,\n  :product_id!,\n  :config_id!,\n  COALESCE(:options, '{}'::jsonb),\n  COALESCE(:meta, '{}'::jsonb),\n  COALESCE(:quantity, 1),\n  COALESCE(:files, '{}'::jsonb),\n  COALESCE(:fulfillment_status::fulfillment_status, null)\n)\nON CONFLICT (order_id, product_id, config_id)\nDO UPDATE SET\n  options = COALESCE(:options, shop.order_products.options),\n  meta = COALESCE(:meta, shop.order_products.meta),\n  quantity = COALESCE(:quantity, shop.order_products.quantity),\n  files = COALESCE(:files, shop.order_products.files),\n  fulfillment_status = COALESCE(:fulfillment_status::fulfillment_status, shop.order_products.fulfillment_status)\nRETURNING *"};
 
 /**
  * Query generated from SQL:
@@ -176,7 +178,7 @@ const upsertOrderProductIR: any = {"usedParamSet":{"order_id":true,"product_id":
  *   meta,
  *   quantity,
  *   files,
- *   fulfilled
+ *   fulfillment_status
  * )
  * VALUES (
  *   :order_id!,
@@ -186,7 +188,7 @@ const upsertOrderProductIR: any = {"usedParamSet":{"order_id":true,"product_id":
  *   COALESCE(:meta, '{}'::jsonb),
  *   COALESCE(:quantity, 1),
  *   COALESCE(:files, '{}'::jsonb),
- *   COALESCE(:fulfilled, false)
+ *   COALESCE(:fulfillment_status::fulfillment_status, null)
  * )
  * ON CONFLICT (order_id, product_id, config_id)
  * DO UPDATE SET
@@ -194,7 +196,7 @@ const upsertOrderProductIR: any = {"usedParamSet":{"order_id":true,"product_id":
  *   meta = COALESCE(:meta, shop.order_products.meta),
  *   quantity = COALESCE(:quantity, shop.order_products.quantity),
  *   files = COALESCE(:files, shop.order_products.files),
- *   fulfilled = COALESCE(:fulfilled, shop.order_products.fulfilled)
+ *   fulfillment_status = COALESCE(:fulfillment_status::fulfillment_status, shop.order_products.fulfillment_status)
  * RETURNING *
  * ```
  */

@@ -4,6 +4,8 @@ services:
   shop:
     build: .
     env_file: .env
+    environment:
+      POSTGRES_HOST: db
     ports:
       - ${SHOP_PORT}:${SHOP_PORT}
     volumes:
@@ -18,7 +20,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - "./pgdata:/var/lib/postgresql"
-      - "./db/init.sql:/docker-entrypoint-initdb.d/init.sql"
   pgbackup:
     build:
       context: .
