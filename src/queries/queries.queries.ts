@@ -14,8 +14,10 @@ export interface IFindOrderByIdParams {
 
 /** 'FindOrderById' return type */
 export interface IFindOrderByIdResult {
+  email: string | null;
   id: string;
   paid: boolean;
+  url: string | null;
 }
 
 /** 'FindOrderById' query type */
@@ -69,14 +71,18 @@ export const setOrderPaid = new PreparedQuery<ISetOrderPaidParams,ISetOrderPaidR
 
 /** 'UpsertOrder' parameters type */
 export interface IUpsertOrderParams {
+  email?: string | null | void;
   id: string;
   paid?: boolean | null | void;
+  url?: string | null | void;
 }
 
 /** 'UpsertOrder' return type */
 export interface IUpsertOrderResult {
+  email: string | null;
   id: string;
   paid: boolean;
+  url: string | null;
 }
 
 /** 'UpsertOrder' query type */
@@ -85,17 +91,24 @@ export interface IUpsertOrderQuery {
   result: IUpsertOrderResult;
 }
 
-const upsertOrderIR: any = {"usedParamSet":{"id":true,"paid":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":43,"b":46}]},{"name":"paid","required":false,"transform":{"type":"scalar"},"locs":[{"a":58,"b":62}]}],"statement":"INSERT INTO shop.orders (id, paid)\nVALUES (:id!, COALESCE(:paid, false))\nON CONFLICT (id)\nDO UPDATE SET\n  paid = COALESCE(EXCLUDED.paid, shop.orders.paid)\nRETURNING id, paid"};
+const upsertOrderIR: any = {"usedParamSet":{"id":true,"paid":true,"email":true,"url":true},"params":[{"name":"id","required":true,"transform":{"type":"scalar"},"locs":[{"a":60,"b":63}]},{"name":"paid","required":false,"transform":{"type":"scalar"},"locs":[{"a":79,"b":83}]},{"name":"email","required":false,"transform":{"type":"scalar"},"locs":[{"a":107,"b":112}]},{"name":"url","required":false,"transform":{"type":"scalar"},"locs":[{"a":135,"b":138}]}],"statement":"INSERT INTO shop.orders (id, paid, email, url)\nVALUES (\n    :id!,\n    COALESCE(:paid, false),\n    COALESCE(:email, null),\n    COALESCE(:url, null)\n)\nON CONFLICT (id)\nDO UPDATE SET\n  paid = COALESCE(EXCLUDED.paid, shop.orders.paid),\n  email = COALESCE(EXCLUDED.email, shop.orders.email),\n  url = COALESCE(EXCLUDED.url, shop.orders.url)\nRETURNING id, paid, email, url"};
 
 /**
  * Query generated from SQL:
  * ```
- * INSERT INTO shop.orders (id, paid)
- * VALUES (:id!, COALESCE(:paid, false))
+ * INSERT INTO shop.orders (id, paid, email, url)
+ * VALUES (
+ *     :id!,
+ *     COALESCE(:paid, false),
+ *     COALESCE(:email, null),
+ *     COALESCE(:url, null)
+ * )
  * ON CONFLICT (id)
  * DO UPDATE SET
- *   paid = COALESCE(EXCLUDED.paid, shop.orders.paid)
- * RETURNING id, paid
+ *   paid = COALESCE(EXCLUDED.paid, shop.orders.paid),
+ *   email = COALESCE(EXCLUDED.email, shop.orders.email),
+ *   url = COALESCE(EXCLUDED.url, shop.orders.url)
+ * RETURNING id, paid, email, url
  * ```
  */
 export const upsertOrder = new PreparedQuery<IUpsertOrderParams,IUpsertOrderResult>(upsertOrderIR);

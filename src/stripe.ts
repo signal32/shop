@@ -1,7 +1,7 @@
 import type { Handler } from 'express';
 import { Stripe } from 'stripe';
 import { pool } from './database/client.ts';
-import { setOrderPaid } from './queries/queries.queries.ts';
+import { setOrderPaid, upsertOrder } from './queries/queries.queries.ts';
 import { fulfillOrder } from './routes/fulfillOrder.ts';
 
 process.loadEnvFile()
@@ -21,9 +21,13 @@ export const webhook: Handler = async (req, res) => {
 
         if (event.type === 'checkout.session.completed') {
             const session = event.data.object;
-
             const orderId = session.metadata['orderId']
-            await setOrderPaid.run({ id: orderId, paid: true }, pool)
+            const email = session.customer_details.email
+            await upsertOrder.run({
+                id: orderId,
+                paid: true,
+                email,
+            }, pool)
             await fulfillOrder(orderId);
         }
 

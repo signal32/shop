@@ -8,6 +8,7 @@ export type Product = IFindProductByIdResult & {
 export type ProductMeta = {
     imageUrls?: string[],
     headerImageUrl: string,
+    customRouteFile?: string,
 }
 
 function isProductMeta(value: unknown): value is ProductMeta {

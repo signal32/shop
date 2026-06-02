@@ -29,6 +29,7 @@
         "cors": "^2.8.6",
         "express": "^5.2.1",
         "pg": "^8.20.0",
+        "resend": "^6.12.4",
         "sanitize-filename": "^1.6.4",
         "sharp": "^0.34.5",
         "stripe": "^20.3.1"

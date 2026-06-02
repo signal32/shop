@@ -11,3 +11,18 @@ When testing stripe payments when developing locally, use the stripe cli to forw
 ```
 stripe listen --forward-to localhost:3004/stripe/webhook
 ```
+
+
+### Database
+
+To deploy all migrations:
+```sh
+node scripts/dbDeploy
+
+```
+
+To make a change:
+```sh
+sqitch add <change filename>
+```
+And then deploy

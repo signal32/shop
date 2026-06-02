@@ -8,12 +8,19 @@ WHERE id = :id!
 RETURNING id, paid;
 
 /* @name UpsertOrder */
-INSERT INTO shop.orders (id, paid)
-VALUES (:id!, COALESCE(:paid, false))
+INSERT INTO shop.orders (id, paid, email, url)
+VALUES (
+    :id!,
+    COALESCE(:paid, false),
+    COALESCE(:email, null),
+    COALESCE(:url, null)
+)
 ON CONFLICT (id)
 DO UPDATE SET
-  paid = COALESCE(EXCLUDED.paid, shop.orders.paid)
-RETURNING id, paid;
+  paid = COALESCE(EXCLUDED.paid, shop.orders.paid),
+  email = COALESCE(EXCLUDED.email, shop.orders.email),
+  url = COALESCE(EXCLUDED.url, shop.orders.url)
+RETURNING id, paid, email, url;
 
 /* @name FindProductsInOrder */
 select * from shop.order_products where order_id = :orderId;
