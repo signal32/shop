@@ -39,7 +39,7 @@ export const getOrder: PostHandler<
             quantity: orderProduct.quantity,
             options: orderProduct.options,
             fulfillmentStatus: orderProduct.fulfillment_status,
-            files: [{ productId: '', name: 'test file', url: 'http://test' }],
+            files: [],
         }
 
         // TODO add type and type guard for 'files'
@@ -51,7 +51,7 @@ export const getOrder: PostHandler<
             });
 
             const url = await getSignedUrl(s3Client, command, { expiresIn: 60 * 60 })
-            productInfo.files.push({ url, name: file.name, productId: orderProduct.productId })
+            productInfo.files.push({ url, name: file.name, productId: orderProduct.product_id })
         }
 
         products.push(productInfo)
