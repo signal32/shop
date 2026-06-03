@@ -1,26 +1,28 @@
-import type { Client } from './database/client.ts'
 import { isProduct, type Options, type Product } from './product.ts'
-
-export const createSelect = (client: Client) => {
-    return client
-        .from('orders')
-        .select(`
-            id,
-            products:order_products (
-                product:products ( * ),
-                quantity
-            )
-        `)
-}
 
 export type ProductId = Product['id']
 
-export const DEFAULT_CONFIG = 'default' as const
-export type ConfigId = typeof DEFAULT_CONFIG | string
+export type ConfigId = string
+
+export function configId({ options }: Config) {
+    return fnv1a(JSON.stringify({ options }))
+}
+
+function fnv1a(str) {
+    let hash = 0x811c9dc5; // FNV offset basis
+
+    for (let i = 0; i < str.length; i++) {
+        hash ^= str.charCodeAt(i);
+        hash = (hash * 0x01000193) >>> 0; // FNV prime
+    }
+
+    return hash.toString(16);
+}
 
 export type Config = {
     quantity: number,
-    options: Options
+    options: Options,
+    meta: Record<string, string>
 }
 
 export type Configs = Record<ConfigId, Config>

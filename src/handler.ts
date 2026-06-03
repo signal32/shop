@@ -14,7 +14,15 @@ export function clientForPostHandler<
     return (url, body) => {
         return fetch(url, {
             method: 'POST',
-            body: body.toString()
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).then(result => {
+            if (result.status === 200) {
+                return result.json()
+            }
+            else throw new Error(`${result.status} ${result.statusText}`)
         }) as Promise<ResOf<H>>
     }
 }
@@ -32,6 +40,11 @@ export function clientForStaticPostHandler<
                 "Content-Type": "application/json",
             },
         })
-            .then(result => result.json()) as Promise<ResOf<H>>
+            .then(result => {
+                if (result.status === 200) {
+                    return result.json()
+                }
+                else throw new Error(`${result.status} ${result.statusText}`)
+            }) as Promise<ResOf<H>>
     }
 }

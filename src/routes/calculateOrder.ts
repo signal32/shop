@@ -18,7 +18,7 @@ export const calculateOrder: PostHandler<
 export async function calculateOrderTotals(order: Order) {
     const linePrices = await Promise.all(iterOrderProducts(order).map(async ({ product, config, optionId }) => {
         const quantity = config.quantity
-        let unitPrice = await getProductPrice(product, config.options)
+        const unitPrice = await getProductPrice(product, config.options)
         const linePrice = unitPrice * quantity
 
         return { unitPrice, linePrice, productId: product.id, optionId }

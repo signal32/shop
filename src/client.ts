@@ -3,10 +3,13 @@ import { clientForStaticPostHandler } from "#src/handler.ts";
 import type { productPrice } from "./routes/productPrice.ts";
 import type { createStripePayment } from "./routes/createStripePayment.ts";
 import type { generatePreSignedUploadUrl } from "./routes/generatePreSignedUploadUrl.ts";
+import type { getOrder } from "./routes/getOrder.ts";
+import type { listSignsPostHandler } from "./customSigns/listSigns.ts";
+import type { findProducts } from "./routes/findProducts.ts";
 
 export class ShopClient {
 
-    protected url: string
+    public readonly url: string
 
     constructor(url: string) {
         this.url = url
@@ -26,5 +29,17 @@ export class ShopClient {
 
     public generatePreSignedUploadUrl = clientForStaticPostHandler<typeof generatePreSignedUploadUrl>(
         () => `${this.url}/generatePreSignedUploadUrl`
+    )
+
+    public getOrder = clientForStaticPostHandler<typeof getOrder>(
+        () => `${this.url}/getOrder`
+    )
+
+    public listSigns = clientForStaticPostHandler<typeof listSignsPostHandler>(
+        () => `${this.url}/listSigns`
+    )
+
+    public findProducts = clientForStaticPostHandler<typeof findProducts>(
+        () => `${this.url}/findProducts`
     )
 }

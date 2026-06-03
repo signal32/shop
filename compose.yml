@@ -1,35 +1,47 @@
-version: "3"
 name: shop
 
 services:
-    server:
-        image: postgrest/postgrest
-        ports:
-            - "3000:3000"
-        environment:
-            PGRST_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-            PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:3000
-            PGRST_DB_SCHEMAS: "shop"
-            PGRST_DB_ANON_ROLE: "web_anon"
-        depends_on:
-            - db
-    db:
-        image: postgres
-        ports:
-            - "5432:5432"
-        environment:
-            POSTGRES_DB: ${POSTGRES_DB}
-            POSTGRES_USER: ${POSTGRES_USER}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-        volumes:
-            - "./pgdata:/var/lib/postgresql"
-            - "./db/init.sql:/docker-entrypoint-initdb.d/init.sql"
+  shop:
+    build: .
+    env_file: .env
+    environment:
+      POSTGRES_HOST: db
+    ports:
+      - ${SHOP_PORT}:${SHOP_PORT}
+    volumes:
+      - ${SHOP_RAILWORKS_DIR}:${SHOP_RAILWORKS_DIR}
+  db:
+    image: postgres:18
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - "./pgdata:/var/lib/postgresql"
+  pgbackup:
+    build:
+      context: .
+      dockerfile: backup.Dockerfile
+    depends_on:
+      - db
+    volumes:
+      - ./scripts/backup.sh:/backup.sh:ro
+      - ./rclone.conf.template:/rclone.conf.template:ro
+      - backup_tmp:/tmp
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+      S3_ENDPOINT: https://s3.finch.hamishweir.uk
+      S3_ACCESS_KEY_ID: ${SHOP_S3_PG_BACKUP_ACCESS_KEY}
+      S3_SECRET_ACCESS_KEY: ${SHOP_S3_PG_BACKUP_SECRET_KEY}
+      S3_BUCKET: shop-pg-backups
+      S3_REGION: ${S3_REGION:-us-east-1}
 
-    swagger:
-        image: swaggerapi/swagger-ui
-        ports:
-            - "8080:8080"
-        expose:
-            - "8080"
-        environment:
-            API_URL: ${POSTGREST_HOST}
+    command: sh /backup.sh
+
+volumes:
+  backup_tmp:

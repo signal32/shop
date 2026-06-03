@@ -11,22 +11,27 @@
         "#src/*": "./src/*"
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "start": "node src/main.ts"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
+        "@pgtyped/cli": "^2.4.3",
         "@types/express": "^5.0.6",
         "@types/node": "^25.2.2",
+        "@types/pg": "^8.20.0",
         "eslint": "^10.0.0",
         "typescript": "^5.9.3"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.1016.0",
         "@aws-sdk/s3-request-presigner": "^3.1016.0",
-        "@supabase/postgrest-js": "^2.95.3",
         "body-parser": "^2.2.2",
         "cors": "^2.8.6",
         "express": "^5.2.1",
+        "pg": "^8.20.0",
+        "resend": "^6.12.4",
+        "sanitize-filename": "^1.6.4",
+        "sharp": "^0.34.5",
         "stripe": "^20.3.1"
     }
 }
