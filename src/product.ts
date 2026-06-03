@@ -9,6 +9,8 @@ export type ProductMeta = {
     imageUrls?: string[],
     headerImageUrl: string,
     customRouteFile?: string,
+    excerpt?: string,
+    published?: string
 }
 
 function isProductMeta(value: unknown): value is ProductMeta {

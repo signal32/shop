@@ -224,6 +224,7 @@ export interface IFindProductByIdParams {
 /** 'FindProductById' return type */
 export interface IFindProductByIdResult {
   available: boolean;
+  created: Date;
   description: string;
   fulfillment_webhook: string | null;
   id: string;
@@ -231,6 +232,7 @@ export interface IFindProductByIdResult {
   name: string;
   price: string | null;
   stripe_price_id: string | null;
+  updated: Date;
 }
 
 /** 'FindProductById' query type */
@@ -258,6 +260,7 @@ export interface IFindProductsParams {
 /** 'FindProducts' return type */
 export interface IFindProductsResult {
   available: boolean;
+  created: Date;
   description: string;
   fulfillment_webhook: string | null;
   id: string;
@@ -265,6 +268,7 @@ export interface IFindProductsResult {
   name: string;
   price: string | null;
   stripe_price_id: string | null;
+  updated: Date;
 }
 
 /** 'FindProducts' query type */

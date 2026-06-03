@@ -1,0 +1,22 @@
+-- Deploy signal32/shop:add_product_created_and_updated to pg
+
+BEGIN;
+
+ALTER TABLE shop.products
+ADD COLUMN created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN updated TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+CREATE OR REPLACE FUNCTION shop.set_updated()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_products_updated
+    BEFORE UPDATE ON shop.products
+    FOR EACH ROW
+    EXECUTE FUNCTION shop.set_updated();
+
+COMMIT;
