@@ -24,6 +24,7 @@ export const listSignsPostHandler: PostHandler<{}, {
         if (!entry.isDirectory() || !existsSync(metaPath)) continue
 
         const meta = JSON.parse((await readFile(metaPath)).toString())
+        if (meta.hidden) continue
         const id = entry.name
         signs.push({
             id,
