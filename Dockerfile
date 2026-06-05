@@ -1,13 +1,19 @@
 FROM node:lts
 
 # Python 3, Wine, and utilities required for sign products
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-pip \
+RUN dpkg --add-architecture i386 && apt-get update && apt-get install -y \
     wine \
+    wine64 \
+    wine32 \
+    xvfb \
     wget \
     ca-certificates \
     zip \
+    python3 \
+    python3-pip \
+    libc6:i386 \
+    libgcc-s1:i386 \
+    libstdc++6:i386 \
     && ln -sf /usr/bin/python3 /usr/bin/python \
     && rm -rf /var/lib/apt/lists/*
 
