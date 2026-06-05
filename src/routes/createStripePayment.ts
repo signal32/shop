@@ -37,9 +37,8 @@ export const createStripePayment: PostHandler<
         },
         payment_intent_data: {
             description: `View your order online and download purchased files at: ${sucessUrl}`
-        }
-
-
+        },
+        allow_promotion_codes: true,
     });
     return res.status(200).json({ url: session.url })
 }
