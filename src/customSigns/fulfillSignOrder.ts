@@ -93,6 +93,7 @@ export const signOrderFulfillmentHandler: FulfillmentHandler = async (req, res, 
     }
 
     // Build and archive TS asset
+    const rwDirWinPath = process.env['SHOP_RAILWORKS_DIR'].replaceAll('/', '\\')
     const { stdout, stderr } = await execAsync([
         `cd ${path.join(railworksDir, 'scripts')} &&`,
         [
@@ -101,10 +102,10 @@ export const signOrderFulfillmentHandler: FulfillmentHandler = async (req, res, 
             `--provider "${provider}"`,
             `--product "${product}"`,
             `--name "${name}"`,
-            String.raw`--rw-dir "Z:\home\hw\dev\railworks\scripts\railworks"`, // TODO: get from env var
+            String.raw`--rw-dir "Z:${rwDirWinPath}\scripts\railworks"`,
             `--build-dir "${buildDir}"`,
             `--ts-tool-prefix=wine`,
-            String.raw`--script-path="Z:\home\hw\dev\railworks\scripts"`, // TODO: get from env var
+            String.raw`--script-path="Z:${rwDirWinPath}\scripts"`,
             `--prebuilt-geometry "${path.join(workDir, 'geometry.GeoPcDx')}"`,
             `"${workDir}"`,
             `&&`
