@@ -7,23 +7,36 @@ import { STRIPE } from "#src/stripe.ts";
 
 export const productPrice: PostHandler<
     { productId: ProductId, config?: Config },
-    { price: number }
+    { price: number, available: boolean }
 > = async (req, res, next) => {
     const { productId, config } = req.body
     if (productId === undefined) throw new Error('Product ID required')
 
     const [product] = await findProductById.run({ productId }, pool).then(fromSelect)
     const price = await getProductPrice(product, config?.options)
-    res.status(200).json({ price })
+    res.status(200).json(price)
 }
 
 export async function getProductPrice(product: Product, options?: Options) {
-    let price = 0
-
-    if (product.stripe_price_id) {
-        const stripePrice = await STRIPE.prices.retrieve(product.stripe_price_id)
-        price = stripePrice.unit_amount
+    console.log({ product })
+    if (!product.available) {
+        console.log('1')
+        return {
+            price: NaN,
+            available: false,
+        }
     }
+    if (product.stripe_price_id) {
+        console.log('2')
 
-    return price
+        const stripePrice = await STRIPE.prices.retrieve(product.stripe_price_id)
+        return {
+            price: stripePrice.unit_amount,
+            available: stripePrice.active,
+        }
+    }
+    else return {
+        price: NaN,
+        available: false,
+    }
 }
