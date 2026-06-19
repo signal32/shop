@@ -18,17 +18,13 @@ export const productPrice: PostHandler<
 }
 
 export async function getProductPrice(product: Product, options?: Options) {
-    console.log({ product })
     if (!product.available) {
-        console.log('1')
         return {
             price: NaN,
             available: false,
         }
     }
     if (product.stripe_price_id) {
-        console.log('2')
-
         const stripePrice = await STRIPE.prices.retrieve(product.stripe_price_id)
         return {
             price: stripePrice.unit_amount,
