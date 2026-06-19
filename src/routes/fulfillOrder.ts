@@ -10,7 +10,8 @@ const resend = new Resend(process.env['SHOP_RESEND_API_KEY']);
 
 export type FulfillmentHandlerReqBody = {
     product: Product,
-    config: Config
+    config: Config,
+    orderId: string,
 }
 
 export type FulfillmentHandlerResBody = {
@@ -79,6 +80,7 @@ export async function fulfillOrder(orderId: string) {
                         quantity: orderProduct.quantity,
                     },
                     product,
+                    orderId,
                 })
 
 
