@@ -1,22 +1,22 @@
 import { pool } from "#src/database/client.ts"
-import type { PostHandler } from "#src/handler.ts"
-import { isOrder, iterOrderProducts, type Order } from "#src/order.ts"
+import { iterOrderProducts, type Order } from "#src/order.ts"
 import { isProduct } from "#src/product.ts"
 import { findProductById } from "#src/queries/queries.queries.ts"
 import { getProductPrice } from "./productPrice.ts"
+import cors from 'cors'
+import type { OpenApiRouter } from "./router.ts"
 
-export const calculateOrder: PostHandler<
-    { order: Order },
-    Awaited<ReturnType<typeof calculateOrderTotals>>
-> = async (req, res, next) => {
-    const order = req.body['order']
-    if (!isOrder(order)) return next('Invalid order')
-
-    const orderTotals = await calculateOrderTotals(order)
-
-    return res.status(200).json(orderTotals)
+export function useOpenApiRouter(openApiRouter: OpenApiRouter) {
+    openApiRouter.post('/calculateOrder', {
+        middleware: [cors()],
+        async handler(req, res) {
+            console.log('hi')
+            const order = req.body
+            const orderTotals = await calculateOrderTotals(order)
+            res.status(200).json(orderTotals)
+        }
+    })
 }
-
 
 export async function calculateOrderTotals(order: Order) {
     const linePrices = await Promise.all(iterOrderProducts(order).map(async ({ product: { id }, config, optionId }) => {

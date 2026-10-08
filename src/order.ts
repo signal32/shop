@@ -1,61 +1,13 @@
-import { isProduct, type Options, type Product } from './product.ts'
+import type { components } from './schema.d.ts'
 
-export type ProductId = Product['id']
-
-export type ConfigId = string
-
-export function configId({ options }: Config) {
-    return fnv1a(JSON.stringify({ options }))
-}
-
-function fnv1a(str) {
-    let hash = 0x811c9dc5; // FNV offset basis
-
-    for (let i = 0; i < str.length; i++) {
-        hash ^= str.charCodeAt(i);
-        hash = (hash * 0x01000193) >>> 0; // FNV prime
-    }
-
-    return hash.toString(16);
-}
-
-export type Config = {
-    quantity: number,
-    options: Options,
-    meta: Record<string, string>
-}
-
-export type Configs = Record<ConfigId, Config>
-
-export type Order = {
-    id: string;
-    products: Record<ProductId, {
-        product: Product,
-        configs: Configs,
-    }>;
-}
-
-export function isOrder(value: unknown): value is Order {
-    return (
-        typeof value === 'object'
-        && value !== null
-        && (
-            'id' in value
-            && typeof value.id === 'string'
-        )
-        && (
-            'products' in value
-            && typeof value.products === 'object'
-            && Object.values(value.products).every(isProduct)
-        )
-    )
-}
+export type Config = components['schemas']['Config']
+export type Order = components['schemas']['Order']
 
 export function updateOrderProductConfig(
     config: Config | ((current: Config) => Config),
     order: Order,
-    productId: ProductId,
-    configId: ConfigId = DEFAULT_CONFIG
+    productId: string,
+    configId: string
 ) {
     const orderProduct = order.products[productId]
     if (!orderProduct) throw new Error('Product not in order')
@@ -64,8 +16,8 @@ export function updateOrderProductConfig(
 
 export function getOrderConfig(
     order: Order,
-    productId: ProductId,
-    configId: ConfigId = DEFAULT_CONFIG
+    productId: string,
+    configId: string
 ) {
     const product = order.products[productId].product
     if (!product) throw new Error('Product does not exist')
@@ -80,4 +32,19 @@ export function* iterOrderProducts(order: Order) {
             yield { product, config, optionId }
         }
     }
+}
+
+export function configId({ options }: Config) {
+    return fnv1a(JSON.stringify({ options }))
+}
+
+function fnv1a(str) {
+    let hash = 0x811c9dc5; // FNV offset basis
+
+    for (let i = 0; i < str.length; i++) {
+        hash ^= str.charCodeAt(i);
+        hash = (hash * 0x01000193) >>> 0; // FNV prime
+    }
+
+    return hash.toString(16);
 }

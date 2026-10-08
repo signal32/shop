@@ -4,6 +4,7 @@ import { findOrderById, findProductById, findProductsInOrder, upsertOrderProduct
 import { fromSelect, type Product } from '#src/product.ts';
 import type { Config } from '#src/order.ts';
 import { Resend } from 'resend'
+import type { OpenApiRouter } from './router.ts';
 
 process.loadEnvFile()
 const resend = new Resend(process.env['SHOP_RESEND_API_KEY']);
@@ -25,6 +26,21 @@ export type FulfillmentHandlerResBody = {
 export type FulfillmentHandler = PostHandler<FulfillmentHandlerReqBody, FulfillmentHandlerResBody>
 export const fulfillmentHandlerClient = clientForPostHandler<FulfillmentHandler>()
 
+export function useOpenApiRouter(openApiRouter: OpenApiRouter) {
+    openApiRouter.post('/fulfillOrder', {
+        async handler(req, res) {
+            try {
+                console.log('whoo')
+                await fulfillOrder(req.body.orderId)
+                res.status(200).send()
+            }
+            catch (err) {
+                //@ts-expect-error
+                res.status(500).json({ error: err.toString()})
+            }
+        }
+    })
+}
 
 export const postFulfillOrder: PostHandler<
     { orderId },

@@ -1,5 +1,6 @@
 import path from "path"
 
+process.loadEnvFile()
 const railworksDir = process.env['SHOP_RAILWORKS_DIR']
 const signTemplateDir = path.join(railworksDir, 'source/RailsDevelopments/CustomSigns')
 

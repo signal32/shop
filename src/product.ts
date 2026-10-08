@@ -1,9 +1,12 @@
+import type { components } from './schema.d.ts'
 import type { findProductById, IFindProductByIdResult } from './queries/queries.queries.ts'
 
-export type Product = IFindProductByIdResult & {
-    meta: ProductMeta,
-    configurationOptions?: ConfigurationOptions
-}
+export type Product = components['schemas']['Product']
+
+//     IFindProductByIdResult & {
+//     meta: ProductMeta,
+//     configurationOptions?: ConfigurationOptions
+// }
 
 export type ProductMeta = {
     imageUrls?: string[],
@@ -47,7 +50,7 @@ export function fromSelect(rows: Awaited<ReturnType<typeof findProductById.run>>
     })
 }
 
-export type Options = Record<string, Option>
+export type Options = components['schemas']['Config']['options']
 
 export type Option = {
     value: string,
