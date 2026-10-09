@@ -1,5 +1,7 @@
 import { S3Client } from "@aws-sdk/client-s3";
 
+process.loadEnvFile()
+
 export const s3Client = new S3Client({
     region: 'auto',
     endpoint: 'https://s3.finch.hamishweir.uk',

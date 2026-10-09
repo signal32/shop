@@ -1,11 +1,9 @@
-import { pool } from "#src/database/client.ts"
 import { iterOrderProducts, type Order } from "#src/order.ts"
 import { isProduct } from "#src/product.ts"
-import { findProductById } from "#src/queries/queries.queries.ts"
-import { getProductPrice } from "./productPrice.ts"
-import cors from 'cors'
-import type { OpenApiRouter } from "./router.ts"
 import type { components } from "#src/schema.js"
+import cors from 'cors'
+import { getProductPrice } from "./productPrice.ts"
+import type { OpenApiRouter } from "./router.ts"
 
 export function useOpenApiRouter(openApiRouter: OpenApiRouter) {
     openApiRouter.post('/calculateOrder', {

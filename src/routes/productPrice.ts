@@ -20,11 +20,21 @@ export async function getProductPrice(product: Product, options?: Options) {
         }
     }
     if (product.stripePriceId) {
-        const stripePrice = await STRIPE.prices.retrieve(product.stripePriceId)
-        return {
-            price: stripePrice.unit_amount,
-            available: stripePrice.active,
+        try {
+            const stripePrice = await STRIPE.prices.retrieve(product.stripePriceId)
+            return {
+                price: stripePrice.unit_amount,
+                available: stripePrice.active,
+            }
         }
+        catch (err) {
+            console.error(err)
+            return {
+                price: NaN,
+                available: false,
+            }
+        }
+
     }
     else return {
         price: NaN,
