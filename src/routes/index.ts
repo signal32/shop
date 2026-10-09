@@ -6,5 +6,6 @@ import { router, openApiRouter } from './router.ts'
 (await import('./generatePreSignedUploadUrl.ts')).useOpenApiRouter(openApiRouter);
 (await import('./fulfillOrder.ts')).useOpenApiRouter(openApiRouter);
 (await import('./getOrder.ts')).useOpenApiRouter(openApiRouter);
+(await import('./listSigns.ts')).useOpenApiRouter(openApiRouter);
 
 export { router }
