@@ -25,15 +25,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  linePrices:
-                    type: array
-                    properties:
-                      unitPrice:
-                        type: number
-                      linePrice:
-                        type: number
+                $ref: "#/components/schemas/CalculatedOrder"
   /productPrice:
     post:
       summary: Gets the price of a product
@@ -157,8 +149,12 @@ paths:
               schema:
                 type: object
                 properties:
-                paid:
-                  type: boolean
+                  paid:
+                    type: boolean
+                  products:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/OrderProductInfo"
 
 components:
   responses:
@@ -222,24 +218,21 @@ components:
     Product:
       type: object
       required:
-        - available
-        - created
-        - description
-        - fulfillment_webhook
+        # - created
+        # - description
+        # - fulfillment_webhook
         - id
-        - meta
+        # - meta
         - name
-        - price
-        - stripe_price_id
-        - updated
+        # - price
+        # - stripePriceId
+        #- updated
       properties:
-        available:
-          type: boolean
         created:
           type: string
           format: date-time
-        description:
-          type: string
+        # description:
+        #   type: string
         fulfillment_webhook:
           type:
             - string
@@ -253,9 +246,8 @@ components:
           type: string
         price:
           type:
-            - string
-            - 'null'
-        stripe_price_id:
+            - number
+        stripePriceId:
           type:
             - string
             - 'null'
@@ -303,3 +295,33 @@ components:
                 type: string
               url:
                 type: string
+
+    CalculatedOrder:
+      type: object
+      required:
+        - linePrices
+        - totalPrice
+      properties:
+        linePrices:
+          type: array
+          items:
+            type: object
+            required:
+              - unitPrice
+              - linePrice
+              - productId
+              - optionId
+              - invalid
+            properties:
+              unitPrice:
+                type: number
+              linePrice:
+                type: number
+              productId:
+                type: string
+              optionId:
+                type: string
+              invalid:
+                type: boolean
+        totalPrice:
+          type: number

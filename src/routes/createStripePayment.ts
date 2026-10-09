@@ -26,7 +26,7 @@ export function useOpenApiRouter(openApiRouter: OpenApiRouter) {
 
             const session = await STRIPE.checkout.sessions.create({
                 line_items: iterOrderProducts(order).map(({ product, config }) => ({
-                    price: product.stripe_price_id,
+                    price: product.stripePriceId,
                     quantity: config.quantity,
                 })).toArray(),
                 mode: 'payment',

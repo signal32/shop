@@ -6,21 +6,21 @@ export function useOpenApiRouter(openApiRouter: OpenApiRouter) {
     openApiRouter.post('/productPrice', {
         async handler(req, res) {
             const { product, config } = req.body
-            const price = await getProductPrice(product, config.options)
+            const price = await getProductPrice(product, config?.options)
             res.status(200).json(price)
         }
     })
 }
 
 export async function getProductPrice(product: Product, options?: Options) {
-    if (!product.available) {
+    if (!product) {
         return {
             price: NaN,
             available: false,
         }
     }
-    if (product.stripe_price_id) {
-        const stripePrice = await STRIPE.prices.retrieve(product.stripe_price_id)
+    if (product.stripePriceId) {
+        const stripePrice = await STRIPE.prices.retrieve(product.stripePriceId)
         return {
             price: stripePrice.unit_amount,
             available: stripePrice.active,

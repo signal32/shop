@@ -5,12 +5,12 @@ import { findProductById } from "#src/queries/queries.queries.ts"
 import { getProductPrice } from "./productPrice.ts"
 import cors from 'cors'
 import type { OpenApiRouter } from "./router.ts"
+import type { components } from "#src/schema.js"
 
 export function useOpenApiRouter(openApiRouter: OpenApiRouter) {
     openApiRouter.post('/calculateOrder', {
         middleware: [cors()],
         async handler(req, res) {
-            console.log('hi')
             const order = req.body
             const orderTotals = await calculateOrderTotals(order)
             res.status(200).json(orderTotals)
@@ -18,9 +18,8 @@ export function useOpenApiRouter(openApiRouter: OpenApiRouter) {
     })
 }
 
-export async function calculateOrderTotals(order: Order) {
-    const linePrices = await Promise.all(iterOrderProducts(order).map(async ({ product: { id }, config, optionId }) => {
-        const [product] = await findProductById.run({ productId: id }, pool)
+export async function calculateOrderTotals(order: Order): Promise<components['schemas']['CalculatedOrder']> {
+    const linePrices = await Promise.all(iterOrderProducts(order).map(async ({ product, config, optionId }) => {
         if (!isProduct(product)) throw new Error('not a product')
 
         const quantity = config.quantity
@@ -28,7 +27,7 @@ export async function calculateOrderTotals(order: Order) {
         const unitPrice = productPrice.available ? productPrice.price : NaN
         const linePrice = unitPrice * quantity
 
-        return { unitPrice, linePrice, productId: product.id, optionId, invalid: !product.available }
+        return { unitPrice, linePrice, productId: product.id, optionId, invalid: !productPrice.available }
     }))
 
     const totalPrice = linePrices.reduce((total, { linePrice }) => total + linePrice, 0)
