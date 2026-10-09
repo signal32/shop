@@ -127,6 +127,7 @@ export interface IFindProductsInOrderResult {
   meta: Json;
   options: Json;
   order_id: string;
+  product: Json | null;
   product_id: string;
   quantity: number;
 }
@@ -156,6 +157,7 @@ export interface IUpsertOrderProductParams {
   meta?: Json | null | void;
   options?: Json | null | void;
   order_id: string;
+  product?: Json | null | void;
   product_id: string;
   quantity?: number | null | void;
 }
@@ -168,6 +170,7 @@ export interface IUpsertOrderProductResult {
   meta: Json;
   options: Json;
   order_id: string;
+  product: Json | null;
   product_id: string;
   quantity: number;
 }
@@ -178,7 +181,7 @@ export interface IUpsertOrderProductQuery {
   result: IUpsertOrderProductResult;
 }
 
-const upsertOrderProductIR: any = {"usedParamSet":{"order_id":true,"product_id":true,"config_id":true,"options":true,"meta":true,"quantity":true,"files":true,"fulfillment_status":true},"params":[{"name":"order_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":147,"b":156}]},{"name":"product_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":161,"b":172}]},{"name":"config_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":177,"b":187}]},{"name":"options","required":false,"transform":{"type":"scalar"},"locs":[{"a":201,"b":208},{"a":457,"b":464}]},{"name":"meta","required":false,"transform":{"type":"scalar"},"locs":[{"a":236,"b":240},{"a":515,"b":519}]},{"name":"quantity","required":false,"transform":{"type":"scalar"},"locs":[{"a":268,"b":276},{"a":571,"b":579}]},{"name":"files","required":false,"transform":{"type":"scalar"},"locs":[{"a":294,"b":299},{"a":632,"b":637}]},{"name":"fulfillment_status","required":false,"transform":{"type":"scalar"},"locs":[{"a":327,"b":345},{"a":700,"b":718}]}],"statement":"INSERT INTO shop.order_products (\n  order_id,\n  product_id,\n  config_id,\n  options,\n  meta,\n  quantity,\n  files,\n  fulfillment_status\n)\nVALUES (\n  :order_id!,\n  :product_id!,\n  :config_id!,\n  COALESCE(:options, '{}'::jsonb),\n  COALESCE(:meta, '{}'::jsonb),\n  COALESCE(:quantity, 1),\n  COALESCE(:files, '{}'::jsonb),\n  COALESCE(:fulfillment_status::fulfillment_status, null)\n)\nON CONFLICT (order_id, product_id, config_id)\nDO UPDATE SET\n  options = COALESCE(:options, shop.order_products.options),\n  meta = COALESCE(:meta, shop.order_products.meta),\n  quantity = COALESCE(:quantity, shop.order_products.quantity),\n  files = COALESCE(:files, shop.order_products.files),\n  fulfillment_status = COALESCE(:fulfillment_status::fulfillment_status, shop.order_products.fulfillment_status)\nRETURNING *"};
+const upsertOrderProductIR: any = {"usedParamSet":{"order_id":true,"product_id":true,"config_id":true,"options":true,"meta":true,"quantity":true,"files":true,"fulfillment_status":true,"product":true},"params":[{"name":"order_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":158,"b":167}]},{"name":"product_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":172,"b":183}]},{"name":"config_id","required":true,"transform":{"type":"scalar"},"locs":[{"a":188,"b":198}]},{"name":"options","required":false,"transform":{"type":"scalar"},"locs":[{"a":212,"b":219},{"a":503,"b":510}]},{"name":"meta","required":false,"transform":{"type":"scalar"},"locs":[{"a":247,"b":251},{"a":561,"b":565}]},{"name":"quantity","required":false,"transform":{"type":"scalar"},"locs":[{"a":279,"b":287},{"a":617,"b":625}]},{"name":"files","required":false,"transform":{"type":"scalar"},"locs":[{"a":305,"b":310},{"a":678,"b":683}]},{"name":"fulfillment_status","required":false,"transform":{"type":"scalar"},"locs":[{"a":338,"b":356},{"a":746,"b":764}]},{"name":"product","required":false,"transform":{"type":"scalar"},"locs":[{"a":397,"b":404},{"a":849,"b":856}]}],"statement":"INSERT INTO shop.order_products (\n  order_id,\n  product_id,\n  config_id,\n  options,\n  meta,\n  quantity,\n  files,\n  fulfillment_status,\n  product\n)\nVALUES (\n  :order_id!,\n  :product_id!,\n  :config_id!,\n  COALESCE(:options, '{}'::jsonb),\n  COALESCE(:meta, '{}'::jsonb),\n  COALESCE(:quantity, 1),\n  COALESCE(:files, '{}'::jsonb),\n  COALESCE(:fulfillment_status::fulfillment_status, null),\n  COALESCE(:product, '{}'::jsonb)\n)\nON CONFLICT (order_id, product_id, config_id)\nDO UPDATE SET\n  options = COALESCE(:options, shop.order_products.options),\n  meta = COALESCE(:meta, shop.order_products.meta),\n  quantity = COALESCE(:quantity, shop.order_products.quantity),\n  files = COALESCE(:files, shop.order_products.files),\n  fulfillment_status = COALESCE(:fulfillment_status::fulfillment_status, shop.order_products.fulfillment_status),\n  product = COALESCE(:product, shop.order_products.product)\nRETURNING *"};
 
 /**
  * Query generated from SQL:
@@ -191,7 +194,8 @@ const upsertOrderProductIR: any = {"usedParamSet":{"order_id":true,"product_id":
  *   meta,
  *   quantity,
  *   files,
- *   fulfillment_status
+ *   fulfillment_status,
+ *   product
  * )
  * VALUES (
  *   :order_id!,
@@ -201,7 +205,8 @@ const upsertOrderProductIR: any = {"usedParamSet":{"order_id":true,"product_id":
  *   COALESCE(:meta, '{}'::jsonb),
  *   COALESCE(:quantity, 1),
  *   COALESCE(:files, '{}'::jsonb),
- *   COALESCE(:fulfillment_status::fulfillment_status, null)
+ *   COALESCE(:fulfillment_status::fulfillment_status, null),
+ *   COALESCE(:product, '{}'::jsonb)
  * )
  * ON CONFLICT (order_id, product_id, config_id)
  * DO UPDATE SET
@@ -209,7 +214,8 @@ const upsertOrderProductIR: any = {"usedParamSet":{"order_id":true,"product_id":
  *   meta = COALESCE(:meta, shop.order_products.meta),
  *   quantity = COALESCE(:quantity, shop.order_products.quantity),
  *   files = COALESCE(:files, shop.order_products.files),
- *   fulfillment_status = COALESCE(:fulfillment_status::fulfillment_status, shop.order_products.fulfillment_status)
+ *   fulfillment_status = COALESCE(:fulfillment_status::fulfillment_status, shop.order_products.fulfillment_status),
+ *   product = COALESCE(:product, shop.order_products.product)
  * RETURNING *
  * ```
  */

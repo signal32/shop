@@ -20,6 +20,9 @@ export function useOpenApiRouter(openApiRouter: OpenApiRouter) {
                         quantity: config.quantity,
                         options: config.options,
                         meta: config.meta,
+                        product: {
+                            fulfillmentWebhook: product.fulfillment_webhook
+                        },
                     }, pool)
                 }
             }

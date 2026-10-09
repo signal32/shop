@@ -27,11 +27,11 @@ export const signOrderFulfillmentHandler: FulfillmentHandler = async (req, res, 
     try {
         if (typeof textureFilename !== 'string') throw new Error('Texture file name required.')
         const parsedSignConfig = JSON.parse(signConfig)
-        const provider = sanitize(req.body.config.options['provider'].value)
+        const provider = sanitize(req.body.config.options['provider'])
         if (typeof provider !== 'string') throw new Error('Expected provider')
-        const product = sanitize(req.body.config.options['product'].value)
+        const product = sanitize(req.body.config.options['product'])
         if (typeof product !== 'string') throw new Error('Expected product')
-        const name = sanitize(req.body.config.options['name'].value)
+        const name = sanitize(req.body.config.options['name'])
         if (typeof name !== 'string') throw new Error('Expected name')
 
         const buildName = `${orderId}-${provider}-${product}-${name}`

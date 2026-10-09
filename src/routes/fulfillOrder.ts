@@ -10,7 +10,6 @@ process.loadEnvFile()
 const resend = new Resend(process.env['SHOP_RESEND_API_KEY']);
 
 export type FulfillmentHandlerReqBody = {
-    product: Product,
     config: Config,
     orderId: string,
 }
@@ -58,7 +57,6 @@ export const postFulfillOrder: PostHandler<
 export async function fulfillOrder(orderId: string) {
     const [order] = await findOrderById.run({ orderId }, pool)
     if (!order.paid) throw new Error('Order not paid')
-
     if (order.email) {
         await resend.emails.send({
             from: 'Hamish Weir Shop <shop@hamishweir.uk>',
@@ -79,23 +77,19 @@ export async function fulfillOrder(orderId: string) {
 
     const orderProducts = await findProductsInOrder.run({ orderId }, pool)
     for (const orderProduct of orderProducts) {
-        const [product] = await findProductById.run({ productId: orderProduct.product_id }, pool).then(fromSelect)
         const orderProductKeys = {
             order_id: orderProduct.order_id,
             product_id: orderProduct.product_id,
             config_id: orderProduct.config_id,
         }
-
-        if (product.fulfillment_webhook) {
-
+        if (orderProduct.product?.['fulfillmentWebhook']) {
             try {
-                const result = await fulfillmentHandlerClient(product.fulfillment_webhook, {
+                const result = await fulfillmentHandlerClient(orderProduct.product['fulfillmentWebhook'], {
                     config: {
                         meta: orderProduct.meta,
                         options: orderProduct.options,
                         quantity: orderProduct.quantity,
                     },
-                    product,
                     orderId,
                 })
 
